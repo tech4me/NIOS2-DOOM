@@ -1,0 +1,33 @@
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+obj/
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Executables
+*.elf
+*.srec
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Eclipse
+.metadata/
