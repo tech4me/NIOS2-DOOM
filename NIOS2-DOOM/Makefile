@@ -2,6 +2,9 @@
 #              VARIABLES APPENDED TO BY INCLUDED MAKEFILE FRAGMENTS
 #------------------------------------------------------------------------------
 
+# User object file
+OBJS := doom_wad_name.o doom_wad.o
+
 # List of include directories for -I compiler option (-I added when used).
 # Includes the BSP.
 ALT_INCLUDE_DIRS :=

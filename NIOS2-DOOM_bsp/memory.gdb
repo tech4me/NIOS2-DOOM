@@ -3,7 +3,7 @@
 # Machine generated for CPU 'Nios2' in SOPC Builder design 'Computer_System'
 # SOPC Builder design path: C:/Users/tech4/OneDrive/Documents/GitHub/NIOS2-DOOM/DE1_SoC_Computer/Computer_System.sopcinfo
 #
-# Generated: Fri Sep 08 01:01:49 EDT 2017
+# Generated: Sun Sep 17 23:12:49 EDT 2017
 
 # DO NOT MODIFY THIS FILE
 #

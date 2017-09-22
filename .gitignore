@@ -33,3 +33,6 @@ obj/
 # Eclipse
 .settings/
 .metadata/
+
+# DOOM
+*.wad

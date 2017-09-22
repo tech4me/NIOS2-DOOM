@@ -2,10 +2,10 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>Sep 15, 2017 2:49:28 AM</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1505458168802</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>Sep 17, 2017 11:51:46 PM</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1505706706515</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>C:\Users\tech4\OneDrive\Documents\GitHub\NIOS2-DOOM\NIOS2-DOOM_bsp</BspGeneratedLocation>
-        <BspSettingsFile>C:\Users\tech4\OneDrive\Documents\GitHub\NIOS2-DOOM\NIOS2-DOOM_bsp\settings.bsp</BspSettingsFile>
+        <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>C:\Users\tech4\OneDrive\Documents\GitHub\NIOS2-DOOM\DE1_SoC_Computer\Computer_System.sopcinfo</SopcDesignFile>
         <JdiFile>default</JdiFile>
         <Cpu>Nios2</Cpu>
