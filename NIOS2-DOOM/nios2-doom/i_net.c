@@ -47,6 +47,7 @@ void I_InitNetwork (void)
 	doomcom->id = DOOMCOM_ID;
 	doomcom->numplayers = doomcom->numnodes = 1;
 	doomcom->deathmatch = false;
+	doomcom->ticdup = 1;
 	doomcom->consoleplayer = 0;
 }
 
