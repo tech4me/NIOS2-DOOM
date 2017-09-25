@@ -209,6 +209,7 @@ C_SRCS += nios2-doom/w_wad.c
 C_SRCS += nios2-doom/wi_stuff.c
 C_SRCS += nios2-doom/z_zone.c
 C_SRCS += nios2-doom-helper/ro_memfs.c
+C_SRCS += nios2-doom-helper/vga.c
 CXX_SRCS :=
 ASM_SRCS :=
 

@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
 // $Id:$
@@ -22,9 +22,10 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_x.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
+	rcsid[] = "$Id: i_x.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
 
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "m_swap.h"
 #include "doomstat.h"
@@ -36,13 +37,13 @@ rcsid[] = "$Id: i_x.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
 #include "doomdef.h"
 
 // Fake mouse handling.
-boolean		grabMouse;
+boolean grabMouse;
 
 // Blocky mode,
 // replace each 320x200 pixel with multiply*multiply pixels.
 // According to Dave Taylor, it still is a bonehead thing
 // to use ....
-static int	multiply=1;
+static int multiply = 1;
 
 /*
 //
@@ -115,18 +116,15 @@ int xlatekey(SDL_keysym *key)
 
 void I_ShutdownGraphics(void)
 {
-  //SDL_Quit();
+	//SDL_Quit();
 }
-
-
 
 //
 // I_StartFrame
 //
-void I_StartFrame (void)
+void I_StartFrame(void)
 {
-    // er?
-
+	// er?
 }
 
 /*
@@ -190,197 +188,95 @@ void I_GetEvent(SDL_Event *Event)
 //
 // I_StartTic
 //
-void I_StartTic (void)
+void I_StartTic(void)
 {
-    //SDL_Event Event;
+	//SDL_Event Event;
 
-    //while ( SDL_PollEvent(&Event) )
+	//while ( SDL_PollEvent(&Event) )
 	//I_GetEvent(&Event);
 }
-
 
 //
 // I_UpdateNoBlit
 //
-void I_UpdateNoBlit (void)
+void I_UpdateNoBlit(void)
 {
-    // what is this?
+	// what is this?
 }
 
 //
 // I_FinishUpdate
 //
-void I_FinishUpdate (void)
+void I_FinishUpdate(void)
 {
-    /*
-    static int	lasttic;
-    int		tics;
-    int		i;
+	/*
+	static int lasttic;
+	int tics;
+	int i;
 
-    // draws little dots on the bottom of the screen
-    if (devparm)
-    {
-
-	i = I_GetTime();
-	tics = i - lasttic;
-	lasttic = i;
-	if (tics > 20) tics = 20;
-
-	for (i=0 ; i<tics*2 ; i+=2)
-	    screens[0][ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0xff;
-	for ( ; i<20*2 ; i+=2)
-	    screens[0][ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
-    }
-
-    // scales the screen size before blitting it
-    if ( SDL_MUSTLOCK(screen) ) {
-	if ( SDL_LockSurface(screen) < 0 ) {
-	    return;
-	}
-    }
-    if ((multiply == 1) && SDL_MUSTLOCK(screen))
-    {
-	unsigned char *olineptr;
-	unsigned char *ilineptr;
-	int y;
-
-	ilineptr = (unsigned char *) screens[0];
-	olineptr = (unsigned char *) screen->pixels;
-
-	y = SCREENHEIGHT;
-	while (y--)
+	// draws little dots on the bottom of the screen
+	if (devparm)
 	{
-	    memcpy(olineptr, ilineptr, screen->w);
-	    ilineptr += SCREENWIDTH;
-	    olineptr += screen->pitch;
+
+		i = I_GetTime();
+		tics = i - lasttic;
+		lasttic = i;
+		if (tics > 20)
+			tics = 20;
+
+		for (i = 0; i < tics * 2; i += 2)
+			screens[0][(SCREENHEIGHT - 1) * SCREENWIDTH + i] = 0xff;
+		for (; i < 20 * 2; i += 2)
+			screens[0][(SCREENHEIGHT - 1) * SCREENWIDTH + i] = 0x0;
 	}
-    }
-    else if (multiply == 2)
-    {
-	unsigned int *olineptrs[2];
-	unsigned int *ilineptr;
-	int x, y, i;
-	unsigned int twoopixels;
-	unsigned int twomoreopixels;
-	unsigned int fouripixels;
 
-	ilineptr = (unsigned int *) (screens[0]);
-	for (i=0 ; i<2 ; i++) {
-	    olineptrs[i] =
-		(unsigned int *)&((Uint8 *)screen->pixels)[i*screen->pitch];
-        }
-
-	y = SCREENHEIGHT;
-	while (y--)
+	// scales the screen size before blitting it
+	if (SDL_MUSTLOCK(screen))
 	{
-	    x = SCREENWIDTH;
-	    do
-	    {
-		fouripixels = *ilineptr++;
-		twoopixels =	(fouripixels & 0xff000000)
-		    |	((fouripixels>>8) & 0xffff00)
-		    |	((fouripixels>>16) & 0xff);
-		twomoreopixels =	((fouripixels<<16) & 0xff000000)
-		    |	((fouripixels<<8) & 0xffff00)
-		    |	(fouripixels & 0xff);
-#ifdef __BIG_ENDIAN__
-		*olineptrs[0]++ = twoopixels;
-		*olineptrs[1]++ = twoopixels;
-		*olineptrs[0]++ = twomoreopixels;
-		*olineptrs[1]++ = twomoreopixels;
-#else
-		*olineptrs[0]++ = twomoreopixels;
-		*olineptrs[1]++ = twomoreopixels;
-		*olineptrs[0]++ = twoopixels;
-		*olineptrs[1]++ = twoopixels;
-#endif
-	    } while (x-=4);
-	    olineptrs[0] += screen->pitch/4;
-	    olineptrs[1] += screen->pitch/4;
+		if (SDL_LockSurface(screen) < 0)
+		{
+			return;
+		}
 	}
-
-    }
-    else if (multiply == 3)
-    {
-	unsigned int *olineptrs[3];
-	unsigned int *ilineptr;
-	int x, y, i;
-	unsigned int fouropixels[3];
-	unsigned int fouripixels;
-
-	ilineptr = (unsigned int *) (screens[0]);
-	for (i=0 ; i<3 ; i++) {
-	    olineptrs[i] = 
-		(unsigned int *)&((Uint8 *)screen->pixels)[i*screen->pitch];
-        }
-
-	y = SCREENHEIGHT;
-	while (y--)
+	if ((multiply == 1) && SDL_MUSTLOCK(screen))
 	{
-	    x = SCREENWIDTH;
-	    do
-	    {
-		fouripixels = *ilineptr++;
-		fouropixels[0] = (fouripixels & 0xff000000)
-		    |	((fouripixels>>8) & 0xff0000)
-		    |	((fouripixels>>16) & 0xffff);
-		fouropixels[1] = ((fouripixels<<8) & 0xff000000)
-		    |	(fouripixels & 0xffff00)
-		    |	((fouripixels>>8) & 0xff);
-		fouropixels[2] = ((fouripixels<<16) & 0xffff0000)
-		    |	((fouripixels<<8) & 0xff00)
-		    |	(fouripixels & 0xff);
-#ifdef __BIG_ENDIAN__
-		*olineptrs[0]++ = fouropixels[0];
-		*olineptrs[1]++ = fouropixels[0];
-		*olineptrs[2]++ = fouropixels[0];
-		*olineptrs[0]++ = fouropixels[1];
-		*olineptrs[1]++ = fouropixels[1];
-		*olineptrs[2]++ = fouropixels[1];
-		*olineptrs[0]++ = fouropixels[2];
-		*olineptrs[1]++ = fouropixels[2];
-		*olineptrs[2]++ = fouropixels[2];
-#else
-		*olineptrs[0]++ = fouropixels[2];
-		*olineptrs[1]++ = fouropixels[2];
-		*olineptrs[2]++ = fouropixels[2];
-		*olineptrs[0]++ = fouropixels[1];
-		*olineptrs[1]++ = fouropixels[1];
-		*olineptrs[2]++ = fouropixels[1];
-		*olineptrs[0]++ = fouropixels[0];
-		*olineptrs[1]++ = fouropixels[0];
-		*olineptrs[2]++ = fouropixels[0];
-#endif
-	    } while (x-=4);
-	    olineptrs[0] += 2*screen->pitch/4;
-	    olineptrs[1] += 2*screen->pitch/4;
-	    olineptrs[2] += 2*screen->pitch/4;
-	}
+		unsigned char *olineptr;
+		unsigned char *ilineptr;
+		int y;
 
-    }
-    if ( SDL_MUSTLOCK(screen) ) {
-	SDL_UnlockSurface(screen);
-    }
-    SDL_UpdateRect(screen, 0, 0, 0, 0);
-    */
+		ilineptr = (unsigned char *)screens[0];
+		olineptr = (unsigned char *)screen->pixels;
+
+		y = SCREENHEIGHT;
+		while (y--)
+		{
+			memcpy(olineptr, ilineptr, screen->w);
+			ilineptr += SCREENWIDTH;
+			olineptr += screen->pitch;
+		}
+	}
+	if (SDL_MUSTLOCK(screen))
+	{
+		SDL_UnlockSurface(screen);
+	}
+	SDL_UpdateRect(screen, 0, 0, 0, 0);
+	*/
 }
-
 
 //
 // I_ReadScreen
 //
-void I_ReadScreen (byte* scr)
+void I_ReadScreen(byte *scr)
 {
-    memcpy (scr, screens[0], SCREENWIDTH*SCREENHEIGHT);
+	memcpy(scr, screens[0], SCREENWIDTH * SCREENHEIGHT);
 }
-
 
 //
 // I_SetPalette
 //
-void I_SetPalette (byte* palette)
+void I_SetPalette(byte *palette)
 {
-    /*
+	/*
     int i;
     SDL_Color colors[256];
 
@@ -394,68 +290,31 @@ void I_SetPalette (byte* palette)
     */
 }
 
-
 void I_InitGraphics(void)
 {
-    /*
-    static int	firsttime=1;
-    Uint16 video_w, video_h, w, h;
-    Uint8 video_bpp;
-    Uint32 video_flags;
 
-    if (!firsttime)
-	return;
-    firsttime = 0;
+	static int firsttime = 1;
+	uint16_t video_w, video_h, w, h;
+	uint8_t video_bpp;
+	uint32_t video_flags;
 
-    video_flags = (SDL_SWSURFACE|SDL_HWPALETTE);
-    if (!!M_CheckParm("-fullscreen"))
-        video_flags |= SDL_FULLSCREEN;
+	if (!firsttime)
+		return;
+	firsttime = 0;
 
-    if (M_CheckParm("-2"))
-	multiply = 2;
+	// check if the user wants to grab the mouse (quite unnice)
+	grabMouse = !!M_CheckParm("-grabmouse");
 
-    if (M_CheckParm("-3"))
-	multiply = 3;
+	video_w = w = SCREENWIDTH * multiply;
+	video_h = h = SCREENHEIGHT * multiply;
+	video_bpp = 8;
 
-    // check if the user wants to grab the mouse (quite unnice)
-    grabMouse = !!M_CheckParm("-grabmouse");
-
-    video_w = w = SCREENWIDTH * multiply;
-    video_h = h = SCREENHEIGHT * multiply;
-    video_bpp = 8;
-    */
-    /* We need to allocate a software surface because the DOOM! code expects
-       the screen surface to be valid all of the time.  Properly done, the
-       rendering code would allocate the video surface in video memory and
-       then call SDL_LockSurface()/SDL_UnlockSurface() around frame rendering.
-       Eventually SDL will support flipping, which would be really nice in
-       a complete-frame rendering application like this.
-    */
-    /*
-    switch (video_w/w) {
-        case 3:
-            multiply *= 3;
-            break;
-        case 2:
-            multiply *= 2;
-            break;
-        case 1:
-            multiply *= 1;
-            break;
-        default:
-		;
-    }
-    if ( multiply > 3 ) {
-        I_Error("Smallest available mode (%dx%d) is too large!",
-						video_w, video_h);
-    }
+	/*
     screen = SDL_SetVideoMode(video_w, video_h, 8, video_flags);
     if ( screen == NULL ) {
         I_Error("Could not set %dx%d video mode: %s", video_w, video_h,
 							SDL_GetError());
     }
-    SDL_ShowCursor(0);
-    SDL_WM_SetCaption("SDL DOOM! v1.10", "doom");
 
     w = SCREENWIDTH * multiply;
     h = SCREENHEIGHT * multiply;

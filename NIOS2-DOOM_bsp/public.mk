@@ -84,6 +84,10 @@ ACDS_VERSION := 17.0
 # used to generate this makefile. 
 # BUILD_NUMBER: 595
 
+# Quartus Generated JDI File. Required for resolving node instance ID's with 
+# design component names. 
+JDI_FILE := C:/Users/tech4/OneDrive/Documents/GitHub/NIOS2-DOOM/DE1_SoC_Computer/DE1_SoC_Computer.jdi
+
 # Qsys--generated SOPCINFO file. Required for resolving node instance ID's with 
 # design component names. 
 SOPCINFO_FILE := C:/Users/tech4/OneDrive/Documents/GitHub/NIOS2-DOOM/DE1_SoC_Computer/Computer_System.sopcinfo
@@ -161,9 +165,9 @@ SOPC_SYSID_FLAG += --sidp=0xff202040
 ELF_PATCH_FLAG  += --sidp 0xff202040
 
 # The SOPC Timestamp 
-# setting SOPC_TIMESTAMP is 1482268809
-SOPC_SYSID_FLAG += --timestamp=1482268809
-ELF_PATCH_FLAG  += --timestamp 1482268809
+# setting SOPC_TIMESTAMP is 1506327015
+SOPC_SYSID_FLAG += --timestamp=1506327015
+ELF_PATCH_FLAG  += --timestamp 1506327015
 
 # Enable JTAG UART driver to recover when host is inactive causing buffer to 
 # full without returning error. Printf will not fail with this recovery. none 

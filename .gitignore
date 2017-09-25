@@ -30,6 +30,10 @@ obj/
 *.pdb
 *.objdump
 
+# Quartus
+incremental_db/
+synthesis/
+
 # Eclipse
 .settings/
 .metadata/
