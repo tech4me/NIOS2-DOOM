@@ -27,6 +27,9 @@ static const char
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "system.h"
+#include "vga.h"
+
 #include "m_swap.h"
 #include "doomstat.h"
 #include "i_system.h"
@@ -39,11 +42,7 @@ static const char
 // Fake mouse handling.
 boolean grabMouse;
 
-// Blocky mode,
-// replace each 320x200 pixel with multiply*multiply pixels.
-// According to Dave Taylor, it still is a bonehead thing
-// to use ....
-static int multiply = 1;
+static uint32_t pallette_colors[256];
 
 /*
 //
@@ -116,7 +115,6 @@ int xlatekey(SDL_keysym *key)
 
 void I_ShutdownGraphics(void)
 {
-	//SDL_Quit();
 }
 
 //
@@ -209,7 +207,6 @@ void I_UpdateNoBlit(void)
 //
 void I_FinishUpdate(void)
 {
-	/*
 	static int lasttic;
 	int tics;
 	int i;
@@ -230,37 +227,24 @@ void I_FinishUpdate(void)
 			screens[0][(SCREENHEIGHT - 1) * SCREENWIDTH + i] = 0x0;
 	}
 
-	// scales the screen size before blitting it
-	if (SDL_MUSTLOCK(screen))
-	{
-		if (SDL_LockSurface(screen) < 0)
-		{
-			return;
-		}
-	}
-	if ((multiply == 1) && SDL_MUSTLOCK(screen))
-	{
-		unsigned char *olineptr;
-		unsigned char *ilineptr;
-		int y;
+	while (alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer));
 
-		ilineptr = (unsigned char *)screens[0];
-		olineptr = (unsigned char *)screen->pixels;
+	// Get backbuffer from control register
+	register unsigned int *backbuffer = *((int *)(VGA_SUBSYSTEM_VGA_PIXEL_DMA_BASE) + 1);
+	register unsigned char *screen = (unsigned char *)screens[0];
+	register unsigned int offset_y = pixel_buffer->y_coord_offset - 2; // -2 because I used unsigned int * for backbuffer
+	register unsigned int x, y;
 
-		y = SCREENHEIGHT;
-		while (y--)
-		{
-			memcpy(olineptr, ilineptr, screen->w);
-			ilineptr += SCREENWIDTH;
-			olineptr += screen->pitch;
-		}
-	}
-	if (SDL_MUSTLOCK(screen))
+	for (y = 0; y < SCREENHEIGHT; y++)
 	{
-		SDL_UnlockSurface(screen);
+		for (x = 0; x < SCREENWIDTH; x++)
+		{
+			backbuffer[x] = pallette_colors[*screen];
+			screen++;
+		}
+		backbuffer += (1 << offset_y);
 	}
-	SDL_UpdateRect(screen, 0, 0, 0, 0);
-	*/
+	alt_up_pixel_buffer_dma_swap_buffers(pixel_buffer);
 }
 
 //
@@ -276,18 +260,13 @@ void I_ReadScreen(byte *scr)
 //
 void I_SetPalette(byte *palette)
 {
-	/*
-    int i;
-    SDL_Color colors[256];
-
-    for ( i=0; i<256; ++i ) {
-	colors[i].r = gammatable[usegamma][*palette++];
-	colors[i].g = gammatable[usegamma][*palette++];
-	colors[i].b = gammatable[usegamma][*palette++];
-	colors[i].unused = 0;
-    }
-    SDL_SetColors(screen, colors, 0, 256);
-    */
+	int i;
+	for (i = 0; i < 256; ++i)
+	{
+		pallette_colors[i] |= gammatable[usegamma][*palette++] << 16;
+		pallette_colors[i] |= gammatable[usegamma][*palette++] << 8;
+		pallette_colors[i] |= gammatable[usegamma][*palette++];
+	}
 }
 
 void I_InitGraphics(void)
@@ -304,26 +283,4 @@ void I_InitGraphics(void)
 
 	// check if the user wants to grab the mouse (quite unnice)
 	grabMouse = !!M_CheckParm("-grabmouse");
-
-	video_w = w = SCREENWIDTH * multiply;
-	video_h = h = SCREENHEIGHT * multiply;
-	video_bpp = 8;
-
-	/*
-    screen = SDL_SetVideoMode(video_w, video_h, 8, video_flags);
-    if ( screen == NULL ) {
-        I_Error("Could not set %dx%d video mode: %s", video_w, video_h,
-							SDL_GetError());
-    }
-
-    w = SCREENWIDTH * multiply;
-    h = SCREENHEIGHT * multiply;
-    if (multiply == 1 && !SDL_MUSTLOCK(screen) ) {
-	screens[0] = (unsigned char *) screen->pixels;
-    } else {
-	screens[0] = (unsigned char *) malloc (SCREENWIDTH * SCREENHEIGHT);
-        if ( screens[0] == NULL )
-            I_Error("Couldn't allocate screen memory");
-    }
-    */
 }

@@ -5,8 +5,8 @@
 
 #include "nios2-doom/i_main.h"
 
-#include "nios2-doom-helper/ro_memfs.h"
-#include "nios2-doom-helper/vga.h"
+#include "ro_memfs.h"
+#include "vga.h"
 
 RO_MEMFS_INSTANCE(RO_MEMFS, ro_memfs);
 

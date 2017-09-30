@@ -28,6 +28,8 @@ rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 #include <stdarg.h>
 #include <ctype.h>
 
+#include <sys/time.h>
+
 #include "doomdef.h"
 #include "m_misc.h"
 #include "i_video.h"
@@ -93,7 +95,9 @@ byte* I_ZoneBase (int*	size)
 //
 int  I_GetTime (void)
 {
-    return 0;//(SDL_GetTicks()*TICRATE)/1000;
+    struct timeval tp;
+    gettimeofday(&tp, NULL);
+    return tp.tv_sec*TICRATE + (tp.tv_usec*TICRATE)/1000000;
 }
 
 
@@ -103,9 +107,6 @@ int  I_GetTime (void)
 //
 void I_Init (void)
 {
-    //if ( SDL_Init(SDL_INIT_AUDIO|SDL_INIT_VIDEO) < 0 )
-    //    I_Error("Could not initialize SDL: %s", SDL_GetError());
-
     I_InitSound();
     //  I_InitGraphics();
 }
