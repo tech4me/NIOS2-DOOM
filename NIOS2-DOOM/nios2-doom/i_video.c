@@ -29,6 +29,7 @@ static const char
 
 #include "system.h"
 #include "vga.h"
+#include "keyboard.h"
 
 #include "m_swap.h"
 #include "doomstat.h"
@@ -44,75 +45,6 @@ boolean grabMouse;
 
 static uint32_t pallette_colors[256];
 
-/*
-//
-//  Translates the key 
-//
-
-int xlatekey(SDL_keysym *key)
-{
-
-    int rc;
-
-    switch(key->sym)
-    {
-      case SDLK_LEFT:	rc = KEY_LEFTARROW;	break;
-      case SDLK_RIGHT:	rc = KEY_RIGHTARROW;	break;
-      case SDLK_DOWN:	rc = KEY_DOWNARROW;	break;
-      case SDLK_UP:	rc = KEY_UPARROW;	break;
-      case SDLK_ESCAPE:	rc = KEY_ESCAPE;	break;
-      case SDLK_RETURN:	rc = KEY_ENTER;		break;
-      case SDLK_TAB:	rc = KEY_TAB;		break;
-      case SDLK_F1:	rc = KEY_F1;		break;
-      case SDLK_F2:	rc = KEY_F2;		break;
-      case SDLK_F3:	rc = KEY_F3;		break;
-      case SDLK_F4:	rc = KEY_F4;		break;
-      case SDLK_F5:	rc = KEY_F5;		break;
-      case SDLK_F6:	rc = KEY_F6;		break;
-      case SDLK_F7:	rc = KEY_F7;		break;
-      case SDLK_F8:	rc = KEY_F8;		break;
-      case SDLK_F9:	rc = KEY_F9;		break;
-      case SDLK_F10:	rc = KEY_F10;		break;
-      case SDLK_F11:	rc = KEY_F11;		break;
-      case SDLK_F12:	rc = KEY_F12;		break;
-	
-      case SDLK_BACKSPACE:
-      case SDLK_DELETE:	rc = KEY_BACKSPACE;	break;
-
-      case SDLK_PAUSE:	rc = KEY_PAUSE;		break;
-
-      case SDLK_EQUALS:	rc = KEY_EQUALS;	break;
-
-      case SDLK_KP_MINUS:
-      case SDLK_MINUS:	rc = KEY_MINUS;		break;
-
-      case SDLK_LSHIFT:
-      case SDLK_RSHIFT:
-	rc = KEY_RSHIFT;
-	break;
-	
-      case SDLK_LCTRL:
-      case SDLK_RCTRL:
-	rc = KEY_RCTRL;
-	break;
-	
-      case SDLK_LALT:
-      case SDLK_LMETA:
-      case SDLK_RALT:
-      case SDLK_RMETA:
-	rc = KEY_RALT;
-	break;
-	
-      default:
-        rc = key->sym;
-	break;
-    }
-
-    return rc;
-
-}
-*/
-
 void I_ShutdownGraphics(void)
 {
 }
@@ -125,73 +57,280 @@ void I_StartFrame(void)
 	// er?
 }
 
-/*
-void I_GetEvent(SDL_Event *Event)
+int translatekey(KB_CODE_TYPE decode_mode, alt_u8 buf, char ascii)
 {
-    Uint8 buttonstate;
-    event_t event;
-
-    switch (Event->type)
-    {
-      case SDL_KEYDOWN:
-	event.type = ev_keydown;
-	event.data1 = xlatekey(&Event->key.keysym);
-	D_PostEvent(&event);
-        break;
-
-      case SDL_KEYUP:
-	event.type = ev_keyup;
-	event.data1 = xlatekey(&Event->key.keysym);
-	D_PostEvent(&event);
-	break;
-
-      case SDL_MOUSEBUTTONDOWN:
-      case SDL_MOUSEBUTTONUP:
-	buttonstate = SDL_GetMouseState(NULL, NULL);
-	event.type = ev_mouse;
-	event.data1 = 0
-	    | (buttonstate & SDL_BUTTON(1) ? 1 : 0)
-	    | (buttonstate & SDL_BUTTON(2) ? 2 : 0)
-	    | (buttonstate & SDL_BUTTON(3) ? 4 : 0);
-	event.data2 = event.data3 = 0;
-	D_PostEvent(&event);
-	break;
-
-#if (SDL_MAJOR_VERSION >= 0) && (SDL_MINOR_VERSION >= 9)
-      case SDL_MOUSEMOTION:
-	if ((Event->motion.x != screen->w/2)||(Event->motion.y != screen->h/2))
+	int rc;
+	switch (decode_mode)
 	{
-	    if (grabMouse) {
-		SDL_WarpMouse(screen->w/2, screen->h/2);
-	    }
-	    event.type = ev_mouse;
-	    event.data1 = 0
-	        | (Event->motion.state & SDL_BUTTON(1) ? 1 : 0)
-	        | (Event->motion.state & SDL_BUTTON(2) ? 2 : 0)
-	        | (Event->motion.state & SDL_BUTTON(3) ? 4 : 0);
-	    event.data2 = Event->motion.xrel << 2;
-	    event.data3 = -Event->motion.yrel << 2;
-	    D_PostEvent(&event);
+	case KB_ASCII_MAKE_CODE:
+	case KB_BINARY_MAKE_CODE:
+		switch (buf)
+		{
+		case 0x45: // 0
+			rc = 0x30;
+			break;
+		case 0x16: // 1
+			rc = 0x31;
+			break;
+		case 0x1E: // 2
+			rc = 0x32;
+			break;
+		case 0x26: // 3
+			rc = 0x33;
+			break;
+		case 0x25: // 4
+			rc = 0x34;
+			break;
+		case 0x2E: // 5
+			rc = 0x35;
+			break;
+		case 0x36: // 6
+			rc = 0x36;
+			break;
+		case 0x3D: // 7
+			rc = 0x37;
+			break;
+		case 0x3E: // 8
+			rc = 0x38;
+			break;
+		case 0x46: // 9
+			rc = 0x39;
+			break;
+		case 0x29: // Space case
+			rc = 0x20;
+			break;
+		case 0x76:
+			rc = KEY_ESCAPE;
+			break;
+		case 0x5A:
+			rc = KEY_ENTER;
+			break;
+		case 0x0D:
+			rc = KEY_TAB;
+			break;
+		case 0x05:
+			rc = KEY_F1;
+			break;
+		case 0x06:
+			rc = KEY_F2;
+			break;
+		case 0x04:
+			rc = KEY_F3;
+			break;
+		case 0x0C:
+			rc = KEY_F4;
+			break;
+		case 0x03:
+			rc = KEY_F5;
+			break;
+		case 0x0B:
+			rc = KEY_F6;
+			break;
+		case 0x83:
+			rc = KEY_F7;
+			break;
+		case 0x0A:
+			rc = KEY_F8;
+			break;
+		case 0x01:
+			rc = KEY_F9;
+			break;
+		case 0x09:
+			rc = KEY_F10;
+			break;
+		case 0x78:
+			rc = KEY_F11;
+			break;
+		case 0x07:
+			rc = KEY_F12;
+			break;
+		case 0x59:
+			rc = KEY_RSHIFT;
+			break;
+		case 0x11:
+			rc = KEY_LALT;
+			break;
+		}
+		break;
+	case KB_LONG_BINARY_MAKE_CODE:
+		switch (buf)
+		{
+		case 0x74:
+			rc = KEY_RIGHTARROW;
+			break;
+		case 0x6B:
+			rc = KEY_LEFTARROW;
+			break;
+		case 0x75:
+			rc = KEY_UPARROW;
+			break;
+		case 0x72:
+			rc = KEY_DOWNARROW;
+			break;
+		case 0x14:
+			rc = KEY_RCTRL;
+			break;
+		case 0x11:
+			rc = KEY_RALT;
+			break;
+		}
+		break;
+	case KB_BREAK_CODE:
+		switch (buf)
+		{
+		case 0x45: // 0
+			rc = 0x30;
+			break;
+		case 0x16: // 1
+			rc = 0x31;
+			break;
+		case 0x1E: // 2
+			rc = 0x32;
+			break;
+		case 0x26: // 3
+			rc = 0x33;
+			break;
+		case 0x25: // 4
+			rc = 0x34;
+			break;
+		case 0x2E: // 5
+			rc = 0x35;
+			break;
+		case 0x36: // 6
+			rc = 0x36;
+			break;
+		case 0x3D: // 7
+			rc = 0x37;
+			break;
+		case 0x3E: // 8
+			rc = 0x38;
+			break;
+		case 0x46: // 9
+			rc = 0x39;
+			break;
+		case 0x29: // Space case
+			rc = 0x20;
+			break;
+		case 0x76:
+			rc = KEY_ESCAPE;
+			break;
+		case 0x5A:
+			rc = KEY_ENTER;
+			break;
+		case 0x0D:
+			rc = KEY_TAB;
+			break;
+		case 0x05:
+			rc = KEY_F1;
+			break;
+		case 0x06:
+			rc = KEY_F2;
+			break;
+		case 0x04:
+			rc = KEY_F3;
+			break;
+		case 0x0C:
+			rc = KEY_F4;
+			break;
+		case 0x03:
+			rc = KEY_F5;
+			break;
+		case 0x0B:
+			rc = KEY_F6;
+			break;
+		case 0x83:
+			rc = KEY_F7;
+			break;
+		case 0x0A:
+			rc = KEY_F8;
+			break;
+		case 0x01:
+			rc = KEY_F9;
+			break;
+		case 0x09:
+			rc = KEY_F10;
+			break;
+		case 0x78:
+			rc = KEY_F11;
+			break;
+		case 0x07:
+			rc = KEY_F12;
+			break;
+		case 0x59:
+			rc = KEY_RSHIFT;
+			break;
+		case 0x11:
+			rc = KEY_LALT;
+			break;
+		}
+		break;
+	case KB_LONG_BREAK_CODE:
+		switch (buf)
+		{
+		case 0x74:
+			rc = KEY_RIGHTARROW;
+			break;
+		case 0x6B:
+			rc = KEY_LEFTARROW;
+			break;
+		case 0x75:
+			rc = KEY_UPARROW;
+			break;
+		case 0x72:
+			rc = KEY_DOWNARROW;
+			break;
+		case 0x14:
+			rc = KEY_RCTRL;
+			break;
+		case 0x11:
+			rc = KEY_RALT;
+			break;
+		}
+		break;
+	default:
+		break;
 	}
-	break;
-#endif
-
-      case SDL_QUIT:
-	I_Quit();
-    }
-
+	return rc;
 }
-*/
+
+void I_GetEvent(KB_CODE_TYPE decode_mode, alt_u8 buf, char ascii)
+{
+	event_t event;
+
+	switch (decode_mode)
+	{
+	case KB_ASCII_MAKE_CODE:
+	case KB_BINARY_MAKE_CODE:
+	case KB_LONG_BINARY_MAKE_CODE:
+		event.type = ev_keydown;
+		event.data1 = translatekey(decode_mode, buf, ascii);
+		D_PostEvent(&event);
+		break;
+
+	case KB_BREAK_CODE:
+	case KB_LONG_BREAK_CODE:
+		event.type = ev_keyup;
+		event.data1 = translatekey(decode_mode, buf, ascii);
+		D_PostEvent(&event);
+		break;
+	default:
+		break;
+	}
+}
 
 //
 // I_StartTic
 //
 void I_StartTic(void)
 {
-	//SDL_Event Event;
-
-	//while ( SDL_PollEvent(&Event) )
-	//I_GetEvent(&Event);
+	KB_CODE_TYPE decode_mode;
+	alt_u8 buf;
+	char ascii;
+	do
+	{
+		decode_scancode(keyboard, &decode_mode, &buf, &ascii);
+		I_GetEvent(decode_mode, buf, ascii);
+	} while (decode_mode != KB_INVALID_CODE);
 }
 
 //
@@ -227,7 +366,8 @@ void I_FinishUpdate(void)
 			screens[0][(SCREENHEIGHT - 1) * SCREENWIDTH + i] = 0x0;
 	}
 
-	while (alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer));
+	while (alt_up_pixel_buffer_dma_check_swap_buffers_status(pixel_buffer))
+		;
 
 	// Get backbuffer from control register
 	register unsigned int *backbuffer = *((int *)(VGA_SUBSYSTEM_VGA_PIXEL_DMA_BASE) + 1);
@@ -263,6 +403,7 @@ void I_SetPalette(byte *palette)
 	int i;
 	for (i = 0; i < 256; ++i)
 	{
+		pallette_colors[i] = 0;
 		pallette_colors[i] |= gammatable[usegamma][*palette++] << 16;
 		pallette_colors[i] |= gammatable[usegamma][*palette++] << 8;
 		pallette_colors[i] |= gammatable[usegamma][*palette++];
@@ -271,11 +412,7 @@ void I_SetPalette(byte *palette)
 
 void I_InitGraphics(void)
 {
-
 	static int firsttime = 1;
-	uint16_t video_w, video_h, w, h;
-	uint8_t video_bpp;
-	uint32_t video_flags;
 
 	if (!firsttime)
 		return;

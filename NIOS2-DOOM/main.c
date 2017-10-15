@@ -14,9 +14,10 @@ int main()
 {
     RO_MEMFS_INIT(RO_MEMFS, ro_memfs);
  
-    // Set environmental variable to search for wad files in hostfs dir
+    // Set environmental variable to search for wad files in memfs dir
     setenv("DOOMWADDIR", "/mnt/memfs", 1);
 
+    keyboard_init();
     vga_init();
 
     Doom_Main(0, NULL);
