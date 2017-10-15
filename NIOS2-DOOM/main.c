@@ -6,6 +6,7 @@
 #include "nios2-doom/i_main.h"
 
 #include "ro_memfs.h"
+#include "keyboard.h"
 #include "vga.h"
 
 RO_MEMFS_INSTANCE(RO_MEMFS, ro_memfs);
